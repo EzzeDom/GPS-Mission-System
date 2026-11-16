@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {chunkedSecureStorage} from '../mobile/lib/secure-session.ts';
+const values=new Map();let fail=false;
+const adapter={getItem:async key=>values.get(key)??null,setItem:async(key,value)=>{if(fail&&!key.endsWith('manifest'))throw Error('simulated storage failure');assert.ok(Buffer.byteLength(value)<=2048);values.set(key,value);},removeItem:async key=>{values.delete(key);}};
+const storage=chunkedSecureStorage(adapter);
+const session=JSON.stringify({token:'x'.repeat(8000),metadata:'🚀'.repeat(2000)});
+await storage.setItem('test',session);assert.equal(await storage.getItem('test'),session);
+fail=true;await assert.rejects(()=>storage.setItem('test','replacement'));assert.equal(await storage.getItem('test'),session,'failed refresh preserves previous complete session');
+fail=false;await storage.setItem('test','replacement');assert.equal(await storage.getItem('test'),'replacement');await storage.removeItem('test');assert.equal(await storage.getItem('test'),null);
+console.log('PASS: large encrypted session chunks, atomic refresh failure, replacement and logout.');

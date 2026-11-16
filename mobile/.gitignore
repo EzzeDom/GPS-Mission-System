@@ -1,0 +1,16 @@
+node_modules/
+.next/
+.expo/
+.env*
+!.env.example
+!.env.local.example
+*.tsbuildinfo
+mobile/android/
+mobile/ios/
+**/google-services.json
+*.p8
+*.p12
+*.jks
+dist/
+.supabase/
+supabase/.temp/

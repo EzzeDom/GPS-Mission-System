@@ -1,0 +1,3 @@
+project_id = "gps-mission-system"
+[functions.dispatch-push]
+verify_jwt = false
